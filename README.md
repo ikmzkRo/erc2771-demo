@@ -1,5 +1,5 @@
-# hardhat init
-NFTを所有した会員のみが地域通貨を配布できるような基本リポジトリです。
+# erc2771-demo
+ERC-2771: メタトランザクションでERC20, ERC721のトークン交換を行う用のリポジトリです。
 
 ## this is only once　for local machine
 - nvm をインストールする(nodeバージョン管理用) Link
