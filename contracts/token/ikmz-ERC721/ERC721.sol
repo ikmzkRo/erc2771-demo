@@ -52,4 +52,23 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _setupRole(URIUPDATER_ROLE, admin);
         _setupRole(APPROVER_ROLE, admin);
     }
+
+    function mint(address _to) public {
+        // TOOD: requreをココで呼ぶとbulkMint時のガス代に影響しないのか後で検証する
+        require(
+            hasRole(MINTER_ROLE, _msgSender()),
+            "IkmzERC721: must have minter role to mint" // エラー分のprefixはコントラクト名とする
+        );
+
+        // 既にミントされているメンバーかどうか判定する
+        // TODO: 前述の通り、tokenOfOwnerByIndexを用いれば不要になるか・・・
+        if (!hasMinted[_to]) {
+            mintedMembers.push(_to);
+            hasMinted[_to] = true;
+        }
+
+        uint256 tokenId = _tokenIdTracker.current();
+        _mint(_to, tokenId);
+        _tokenIdTracker.increment();
+    }
 }
