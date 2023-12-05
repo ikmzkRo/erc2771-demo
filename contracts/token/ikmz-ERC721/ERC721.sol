@@ -8,6 +8,9 @@ import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
 import {ERC2771Context} from "@openzeppelin/contracts/metatx/ERC2771Context.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 
+// TODO: import "@openzeppelin/contracts/metatx/MinimalForwarder.sol";も使える。使わない理由は？
+// https://github.com/ikeda1729/defender-meta-txs-polygon-testnet/blob/master/contracts/Registry.sol
+
 contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
     using Counters for Counters.Counter;
     using Strings for uint256;
@@ -29,6 +32,9 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
     mapping(address => bool) private hasMinted;
     address[] private mintedMembers;
 
+    // デプロイ時に5件指定する
+    // Trustedforwarderの登録漏れには注意する
+    // TODO: isTrastedForwarder = trueで返却されることを確認する
     constructor(
         string memory name,
         string memory symbol,
