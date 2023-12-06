@@ -53,6 +53,8 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _setupRole(APPROVER_ROLE, admin);
     }
 
+    /// @dev NFTを新しく発行する関数
+    /// @param _to 新しく発行したNFTを受け取るアドレス
     function mint(address _to) public {
         // TOOD: requreをココで呼ぶとbulkMint時のガス代に影響しないのか後で検証する
         require(
@@ -70,6 +72,14 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         uint256 tokenId = _tokenIdTracker.current();
         _mint(_to, tokenId);
         _tokenIdTracker.increment();
+    }
+
+    /// @dev 一括でNFTを新しく発行する関数
+    /// @param _tos 新しく発行したNFTを受け取るアドレスのリスト
+    function bulkMint(address[] calldata _tos) public {
+        for (uint256 i = 0; i < _tos.length; i++) {
+            mint(_tos[i]);
+        }
     }
 
     // 継承元のコントラクト間で同じ名前とパラメータータイプの関数が複数存在し下記関数が衝突する
