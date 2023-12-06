@@ -82,6 +82,29 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         }
     }
 
+    /// @dev トークンID (NFT) を破棄する関数
+    /// @param _tokenId 破棄するトークンID
+    function burn(uint256 _tokenId) public virtual {
+        // TODO: 毎回requireが呼ばれるのはガス代効率が良くないかな？
+        require(
+            hasRole(BURNER_ROLE, _msgSender()),
+            "BasicERC721: must have burner role to burn"
+        );
+        require(
+            _isApprovedOrOwner(_msgSender(), _tokenId),
+            "burn caller is not owner nor approved"
+        );
+        _burn(_tokenId);
+    }
+
+    /// @dev 一括でNFTを破棄する関数
+    /// @param _tokenIds 破棄するトークンIDのリスト
+    function bulkBurn(uint256[] calldata _tokenIds) public {
+        for (uint256 i = 0; i < _tokenIds.length; i++) {
+            burn(_tokenIds[i]);
+        }
+    }
+
     // 継承元のコントラクト間で同じ名前とパラメータータイプの関数が複数存在し下記関数が衝突する
     // ERC721とERC721Enumerableでの _beforeTokenTransfer 関数。
     // ERC2771ContextとContextでの _msgData 関数。
