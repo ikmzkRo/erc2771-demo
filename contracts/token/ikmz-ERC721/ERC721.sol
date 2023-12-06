@@ -71,4 +71,55 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _mint(_to, tokenId);
         _tokenIdTracker.increment();
     }
+
+    // 継承元のコントラクト間で同じ名前とパラメータータイプの関数が複数存在し下記関数が衝突する
+    // ERC721とERC721Enumerableでの _beforeTokenTransfer 関数。
+    // ERC2771ContextとContextでの _msgData 関数。
+    // ERC2771ContextとContextでの _msgSender 関数。
+    // AccessControl、ERC721、ERC721Enumerableでの supportsInterface 関数。
+    // IkmzERC721 コントラクトでこれらの関数を明示的にオーバーライドし、適切な基本コントラクトから関数を呼び出して、意図した機能を維持する
+    function _beforeTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId
+    )
+        internal
+        virtual
+        override(
+            // uint256 batchSize
+            ERC721,
+            ERC721Enumerable
+        )
+    {
+        super._beforeTokenTransfer(from, to, firstTokenId);
+    }
+
+    function _msgData()
+        internal
+        view
+        override(ERC2771Context, Context)
+        returns (bytes calldata)
+    {
+        return ERC2771Context._msgData();
+    }
+
+    function _msgSender()
+        internal
+        view
+        override(ERC2771Context, Context)
+        returns (address sender)
+    {
+        return ERC2771Context._msgSender();
+    }
+
+    function supportsInterface(
+        bytes4 interfaceId
+    )
+        public
+        view
+        override(ERC721, ERC721Enumerable, AccessControl)
+        returns (bool)
+    {
+        return super.supportsInterface(interfaceId);
+    }
 }
