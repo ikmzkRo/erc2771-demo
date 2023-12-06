@@ -32,7 +32,6 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
     mapping(address => bool) private hasMinted;
     address[] private mintedMembers;
 
-    // TODO: isTrastedForwarder = trueで返却されることを確認する
     constructor(
         string memory name,
         string memory symbol,
