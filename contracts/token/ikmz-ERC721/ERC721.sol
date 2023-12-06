@@ -32,8 +32,6 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
     mapping(address => bool) private hasMinted;
     address[] private mintedMembers;
 
-    // デプロイ時に5件指定する
-    // Trustedforwarderの登録漏れには注意する
     // TODO: isTrastedForwarder = trueで返却されることを確認する
     constructor(
         string memory name,
@@ -55,15 +53,14 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
 
     /// @dev NFTを新しく発行する関数
     /// @param _to 新しく発行したNFTを受け取るアドレス
+    // TODO: bulkMint時に毎回requireを呼ぶとガス代に影響しないのか後で検証する
+    // TODO: 前述の通り、tokenOfOwnerByIndexを用いれば不要になるか・・・
     function mint(address _to) public {
-        // TOOD: requreをココで呼ぶとbulkMint時のガス代に影響しないのか後で検証する
         require(
             hasRole(MINTER_ROLE, _msgSender()),
-            "IkmzERC721: must have minter role to mint" // エラー分のprefixはコントラクト名とする
+            "IkmzERC721: must have minter role to mint"
         );
 
-        // 既にミントされているメンバーかどうか判定する
-        // TODO: 前述の通り、tokenOfOwnerByIndexを用いれば不要になるか・・・
         if (!hasMinted[_to]) {
             mintedMembers.push(_to);
             hasMinted[_to] = true;
@@ -84,15 +81,15 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
 
     /// @dev トークンID (NFT) を破棄する関数
     /// @param _tokenId 破棄するトークンID
+    // TODO: bulkBurn時に毎回requireを呼ぶとガス代に影響しないのか後で検証する
     function burn(uint256 _tokenId) public virtual {
-        // TODO: 毎回requireが呼ばれるのはガス代効率が良くないかな？
         require(
             hasRole(BURNER_ROLE, _msgSender()),
-            "BasicERC721: must have burner role to burn"
+            "IkmzERC721: must have burner role to burn"
         );
         require(
             _isApprovedOrOwner(_msgSender(), _tokenId),
-            "burn caller is not owner nor approved"
+            "IkmzERC721: burn caller is not owner nor approved"
         );
         _burn(_tokenId);
     }
@@ -102,6 +99,25 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
     function bulkBurn(uint256[] calldata _tokenIds) public {
         for (uint256 i = 0; i < _tokenIds.length; i++) {
             burn(_tokenIds[i]);
+        }
+    }
+
+    /// @dev 一括でNFTを破棄する関数
+    /// @param _froms 送信元アドレスのリスト
+    /// @param _tos 送信先アドレスのリスト
+    /// @param _tokenIds 転送するトークンIDのリスト
+    function bulkTransfer(
+        address[] calldata _froms,
+        address[] calldata _tos,
+        uint256[] calldata _tokenIds
+    ) external {
+        require(
+            _froms.length == _tos.length && _froms.length == _tokenIds.length,
+            "IkmzERC721: input arrays length mismatch"
+        );
+
+        for (uint256 i = 0; i < _froms.length; i++) {
+            safeTransferFrom(_froms[i], _tos[i], _tokenIds[i]);
         }
     }
 
