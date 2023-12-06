@@ -1,2 +1,1 @@
-export const baseERC721ContractAddress = "0x3bccD924B40159aCD89decC5DB78B5baf425805b"
-export const baseERC20ContractAddress = "0x93A6bE70077B840a2A56BcAc8A5fac6C15F38F25"
+export const ikmzERC721ContractAddress = "0x77459B28fd6Ed06F81bDAeDfBD27608112280A99"

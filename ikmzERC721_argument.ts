@@ -1,0 +1,1 @@
+module.exports = ["kicr", "ikmz", "https://aws/s3_bucket/honyohonyo", "0xa2fb2553e57436b455F57270Cc6f56f6dacDA1a5", "0xBd1471fD728dd7e934141a581eC74CEba50FDB16"]
