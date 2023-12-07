@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// https://goerli.etherscan.io/address/0x77459b28fd6ed06f81bdaedfbd27608112280a99
+// https://goerli.etherscan.io/address/0xf5DcD8fEa781E140DCBEFB3637074fefE76dF958
 
 import {ERC721, Context} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
@@ -54,30 +54,31 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
 
     /// @dev NFTを新しく発行する関数
     /// @param _to 新しく発行したNFTを受け取るアドレス
-    // TODO: bulkMint時に毎回requireを呼ぶとガス代に影響しないのか後で検証する
-    // TODO: 前述の通り、tokenOfOwnerByIndexを用いれば不要になるか・・・
     function mint(address _to) public {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
             "IkmzERC721: must have minter role to mint"
         );
-
-        if (!hasMinted[_to]) {
-            mintedMembers.push(_to);
-            hasMinted[_to] = true;
-        }
-
-        uint256 tokenId = _tokenIdTracker.current();
-        _mint(_to, tokenId);
-        _tokenIdTracker.increment();
+        _mintNFT(_to);
     }
 
     /// @dev 一括でNFTを新しく発行する関数
     /// @param _tos 新しく発行したNFTを受け取るアドレスのリスト
     function bulkMint(address[] calldata _tos) public {
+        require(
+            hasRole(MINTER_ROLE, _msgSender()),
+            "IkmzERC721: must have minter role to mint"
+        );
+
         for (uint256 i = 0; i < _tos.length; i++) {
-            mint(_tos[i]);
+            _mintNFT(_tos[i]);
         }
+    }
+
+    function _mintNFT(address _to) internal {
+        uint256 tokenId = _tokenIdTracker.current();
+        _mint(_to, tokenId);
+        _tokenIdTracker.increment();
     }
 
     /// @dev トークンID (NFT) を破棄する関数
