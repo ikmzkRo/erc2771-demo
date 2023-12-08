@@ -104,7 +104,7 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         }
     }
 
-    /// @dev 一括でNFTを破棄する関数
+    /// @dev 一括でNFTを転送する関数
     /// @param _froms 送信元アドレスのリスト
     /// @param _tos 送信先アドレスのリスト
     /// @param _tokenIds 転送するトークンIDのリスト
