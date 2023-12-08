@@ -4,6 +4,8 @@ require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
 require("@nomiclabs/hardhat-etherscan");
 import "hardhat-gas-reporter";
+import "@nomiclabs/hardhat-ethers";
+import chai from "chai";
 // import "@nomicfoundation/hardhat-toolbox";
 
 /**
