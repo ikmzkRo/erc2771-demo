@@ -72,7 +72,6 @@ describe("GasOfNFTBulkMint", () => {
 
   const numString = process.env.TOS_LENGTH;
   const num = numString ? parseInt(numString, 10) || 2 : 2;
-  console.log(num);
 
   describe("bulk mint - require once", function () {
     it("[S] Should bulkMint when called by minter", async function () {
