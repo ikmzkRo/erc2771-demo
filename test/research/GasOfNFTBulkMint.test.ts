@@ -19,9 +19,6 @@ describe("GasOfNFTBulkMint", () => {
   const DEFAULT_ADMIN_ROLE: string = '0x0000000000000000000000000000000000000000000000000000000000000000';
   const MINTER_ROLE: string | null = Web3.utils.soliditySha3("MINTER_ROLE");
   const EXECUTOR_ROLE: string | null = Web3.utils.soliditySha3("EXECUTOR_ROLE");
-
-  const NotMinterRoleError = "GasOfNFTBulkMint: must have minter role to mint";
-
   const name: string = 'GasOfNFTBulkMint';
   const symbol: string = 'TEST';
   const baseTokenURI: string = 'https://example.com/';
@@ -91,11 +88,6 @@ describe("GasOfNFTBulkMint", () => {
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(bob.address, 0)).to.equal(2);
     })
 
-    it("[R] Should revert when called by other than minter", async () => {
-      await expect(gasOfNFTBulkMint.connect(alice).mint(alice.address))
-        .to.be.rejectedWith(NotMinterRoleError);
-    })
-
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
       const tos = [alice.address, alice.address];
@@ -116,15 +108,46 @@ describe("GasOfNFTBulkMint", () => {
       expect(await gasOfNFTBulkMint.ownerOf(3)).to.equal(bob.address);
       expect(await gasOfNFTBulkMint.ownerOf(4)).to.equal(bob.address);
     });
-
-    it("[R] Should revert when called by other than bulkMinter", async () => {
-      const tos = [alice.address, bob.address];
-      await expect(gasOfNFTBulkMint.connect(alice).bulkMint(tos))
-        .to.be.rejectedWith(NotMinterRoleError);
-    })
   })
 
   describe("bulk mint - require again", function () {
+    it("[S] Should mint when called by minter", async () => {
+      // check alice recipient
+      await gasOfNFTBulkMint.connect(admin).__mint(alice.address);
+
+      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(1);
+      expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
+      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
+
+      // check bob recipient
+      await gasOfNFTBulkMint.connect(admin).grantRole(MINTER_ROLE, minter.address)
+      await gasOfNFTBulkMint.connect(minter).__mint(bob.address);
+
+      expect(await gasOfNFTBulkMint.balanceOf(bob.address)).to.equal(1);
+      expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(bob.address);
+      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(bob.address, 0)).to.equal(2);
+    })
+
+    it("[S] Should bulkMint when called by minter", async function () {
+      // check alice recipient
+      const tos = [alice.address, alice.address];
+      await gasOfNFTBulkMint.connect(admin).__bulkMint(tos);
+
+      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
+      expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
+      expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
+      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
+      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 1)).to.equal(2);
+
+      // check bob recipient
+      const _tos = [bob.address, bob.address];
+      await gasOfNFTBulkMint.connect(admin).grantRole(MINTER_ROLE, minter.address)
+      await gasOfNFTBulkMint.connect(minter).__bulkMint(_tos);
+
+      expect(await gasOfNFTBulkMint.balanceOf(bob.address)).to.equal(2);
+      expect(await gasOfNFTBulkMint.ownerOf(3)).to.equal(bob.address);
+      expect(await gasOfNFTBulkMint.ownerOf(4)).to.equal(bob.address);
+    });
   })
 
 })
