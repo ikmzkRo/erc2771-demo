@@ -29,7 +29,7 @@ ERC-2771: メタトランザクションでERC20, ERC721のトークン交換を
 | `npx hardhat console --network localhost` | デプロイしたコントラクトに接続する |
 | `npx hardhat verify --network goerli 0x000...` |  |
 | `npx hardhat verify --constructor-args ikmzERC721_argument.ts --network goerli 0x77459B28fd6Ed06F81bDAeDfBD27608112280A99` |  |
-|  |  |
+| `TOS_LENGTH=10 yarn hardhat test test/research/GasOfNFTBulkMint.test.ts` | ガス代コスト見積もり |
 |  |  |
 |  |  |
 |  |  |
