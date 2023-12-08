@@ -71,82 +71,30 @@ describe("GasOfNFTBulkMint", () => {
   })
 
   describe("bulk mint - require once", function () {
-    it("[S] Should mint when called by minter", async () => {
-      // check alice recipient
-      await gasOfNFTBulkMint.connect(admin).mint(alice.address);
-
-      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(1);
-      expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
-      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
-
-      // check bob recipient
-      await gasOfNFTBulkMint.connect(admin).grantRole(MINTER_ROLE, minter.address)
-      await gasOfNFTBulkMint.connect(minter).mint(bob.address);
-
-      expect(await gasOfNFTBulkMint.balanceOf(bob.address)).to.equal(1);
-      expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(bob.address);
-      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(bob.address, 0)).to.equal(2);
-    })
-
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
       const tos = [alice.address, alice.address];
-      await gasOfNFTBulkMint.connect(admin).bulkMint(tos);
+      await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 1)).to.equal(2);
-
-      // check bob recipient
-      const _tos = [bob.address, bob.address];
-      await gasOfNFTBulkMint.connect(admin).grantRole(MINTER_ROLE, minter.address)
-      await gasOfNFTBulkMint.connect(minter).bulkMint(_tos);
-
-      expect(await gasOfNFTBulkMint.balanceOf(bob.address)).to.equal(2);
-      expect(await gasOfNFTBulkMint.ownerOf(3)).to.equal(bob.address);
-      expect(await gasOfNFTBulkMint.ownerOf(4)).to.equal(bob.address);
     });
   })
 
   describe("bulk mint - require again", function () {
-    it("[S] Should mint when called by minter", async () => {
-      // check alice recipient
-      await gasOfNFTBulkMint.connect(admin).__mint(alice.address);
-
-      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(1);
-      expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
-      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
-
-      // check bob recipient
-      await gasOfNFTBulkMint.connect(admin).grantRole(MINTER_ROLE, minter.address)
-      await gasOfNFTBulkMint.connect(minter).__mint(bob.address);
-
-      expect(await gasOfNFTBulkMint.balanceOf(bob.address)).to.equal(1);
-      expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(bob.address);
-      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(bob.address, 0)).to.equal(2);
-    })
-
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
       const tos = [alice.address, alice.address];
-      await gasOfNFTBulkMint.connect(admin).__bulkMint(tos);
+      await gasOfNFTBulkMint.connect(admin).BulkMint_RequireAgain(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 1)).to.equal(2);
-
-      // check bob recipient
-      const _tos = [bob.address, bob.address];
-      await gasOfNFTBulkMint.connect(admin).grantRole(MINTER_ROLE, minter.address)
-      await gasOfNFTBulkMint.connect(minter).__bulkMint(_tos);
-
-      expect(await gasOfNFTBulkMint.balanceOf(bob.address)).to.equal(2);
-      expect(await gasOfNFTBulkMint.ownerOf(3)).to.equal(bob.address);
-      expect(await gasOfNFTBulkMint.ownerOf(4)).to.equal(bob.address);
     });
   })
 
