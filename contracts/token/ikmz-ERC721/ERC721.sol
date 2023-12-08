@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-// https://goerli.etherscan.io/address/0xf5DcD8fEa781E140DCBEFB3637074fefE76dF958
-
 import {ERC721, Context} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {Counters} from "@openzeppelin/contracts/utils/Counters.sol";
@@ -52,8 +50,8 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _setupRole(APPROVER_ROLE, admin);
     }
 
-    /// @dev NFTを新しく発行する関数
-    /// @param _to 新しく発行したNFTを受け取るアドレス
+    /// @dev
+    /// @param _to
     function mint(address _to) public {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
@@ -62,8 +60,8 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _mintNFT(_to);
     }
 
-    /// @dev 一括でNFTを新しく発行する関数
-    /// @param _tos 新しく発行したNFTを受け取るアドレスのリスト
+    /// @dev
+    /// @param _tos
     function bulkMint(address[] calldata _tos) public {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
@@ -81,9 +79,8 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _tokenIdTracker.increment();
     }
 
-    /// @dev トークンID (NFT) を破棄する関数
-    /// @param _tokenId 破棄するトークンID
-    // TODO: bulkBurn時に毎回requireを呼ぶとガス代に影響しないのか後で検証する
+    /// @dev
+    /// @param _tokenId
     function burn(uint256 _tokenId) public virtual {
         require(
             hasRole(BURNER_ROLE, _msgSender()),
@@ -96,18 +93,22 @@ contract IkmzERC721 is ERC721, ERC721Enumerable, AccessControl, ERC2771Context {
         _burn(_tokenId);
     }
 
-    /// @dev 一括でNFTを破棄する関数
-    /// @param _tokenIds 破棄するトークンIDのリスト
+    /// @dev
+    /// @param _tokenIds
     function bulkBurn(uint256[] calldata _tokenIds) public {
+        require(
+            hasRole(BURNER_ROLE, _msgSender()),
+            "IkmzERC721: must have burner role to burn"
+        );
         for (uint256 i = 0; i < _tokenIds.length; i++) {
-            burn(_tokenIds[i]);
+            require(
+                _isApprovedOrOwner(_msgSender(), _tokenIds[i]),
+                "IkmzERC721: burn caller is not owner nor approved"
+            );
+            _burn(_tokenIds[i]);
         }
     }
 
-    /// @dev 一括でNFTを転送する関数
-    /// @param _froms 送信元アドレスのリスト
-    /// @param _tos 送信先アドレスのリスト
-    /// @param _tokenIds 転送するトークンIDのリスト
     function bulkTransfer(
         address[] calldata _froms,
         address[] calldata _tos,
