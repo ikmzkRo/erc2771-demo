@@ -43,7 +43,7 @@ contract GasOfNFTBulkMint is
     }
 
     // bulk mint - require once
-    function mint(address _to) public {
+    function Mint_RequireOnce(address _to) public {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
             "GasOfNFTBulkMint: must have minter role to mint"
@@ -51,7 +51,7 @@ contract GasOfNFTBulkMint is
         _mintNFT(_to);
     }
 
-    function bulkMint(address[] calldata _tos) public {
+    function BulkMint_RequireOnce(address[] calldata _tos) public {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
             "GasOfNFTBulkMint: must have minter role to mint"
@@ -69,7 +69,7 @@ contract GasOfNFTBulkMint is
     }
 
     // bulk mint - require again
-    function __mint(address _to) public {
+    function Mint_RequireAgain(address _to) public {
         require(
             hasRole(MINTER_ROLE, _msgSender()),
             "GasOfNFTBulkMint: must have minter role to mint"
@@ -80,9 +80,9 @@ contract GasOfNFTBulkMint is
         _tokenIdTracker.increment();
     }
 
-    function __bulkMint(address[] calldata _tos) public {
+    function BulkMint_RequireAgain(address[] calldata _tos) public {
         for (uint256 i = 0; i < _tos.length; i++) {
-            __mint(_tos[i]);
+            Mint_RequireAgain(_tos[i]);
         }
     }
 
