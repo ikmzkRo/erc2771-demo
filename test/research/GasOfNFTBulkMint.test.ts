@@ -33,6 +33,9 @@ describe("GasOfNFTBulkMint", () => {
   let minter: SignerWithAddress;
   let trustedForwarder: SignerWithAddress;
 
+  // Import the process.argv to access command-line arguments
+  const numTokensToMint = parseInt(process.argv[2], 10) || 2;
+
   beforeEach(async () => {
     [deployer, executor, admin, alice, bob, minter, trustedForwarder] = await ethers.getSigners();
 
@@ -73,7 +76,8 @@ describe("GasOfNFTBulkMint", () => {
   describe("bulk mint - require once", function () {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
-      const tos = [alice.address, alice.address];
+      const tos = Array(numTokensToMint).fill(alice.address);
+      console.log(tos)
       await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
@@ -87,7 +91,8 @@ describe("GasOfNFTBulkMint", () => {
   describe("bulk mint - require again", function () {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
-      const tos = [alice.address, alice.address];
+      const tos = Array(numTokensToMint).fill(alice.address);
+      console.log(tos)
       await gasOfNFTBulkMint.connect(admin).BulkMint_RequireAgain(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
