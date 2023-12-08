@@ -33,9 +33,6 @@ describe("GasOfNFTBulkMint", () => {
   let minter: SignerWithAddress;
   let trustedForwarder: SignerWithAddress;
 
-  // Import the process.argv to access command-line arguments
-  const numTokensToMint = parseInt(process.argv[2], 10) || 2;
-
   beforeEach(async () => {
     [deployer, executor, admin, alice, bob, minter, trustedForwarder] = await ethers.getSigners();
 
@@ -73,14 +70,17 @@ describe("GasOfNFTBulkMint", () => {
     });
   })
 
+  const numString = process.env.TOS_LENGTH;
+  const num = numString ? parseInt(numString, 10) || 2 : 2;
+  console.log(num);
+
   describe("bulk mint - require once", function () {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
-      const tos = Array(numTokensToMint).fill(alice.address);
-      console.log(tos)
+      const tos = Array(num).fill(alice.address);
       await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
 
-      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
+      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(num);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
@@ -91,11 +91,10 @@ describe("GasOfNFTBulkMint", () => {
   describe("bulk mint - require again", function () {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
-      const tos = Array(numTokensToMint).fill(alice.address);
-      console.log(tos)
+      const tos = Array(num).fill(alice.address);
       await gasOfNFTBulkMint.connect(admin).BulkMint_RequireAgain(tos);
 
-      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(2);
+      expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(num);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
