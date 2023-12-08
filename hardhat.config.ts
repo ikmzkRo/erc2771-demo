@@ -4,7 +4,7 @@ require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
 require("@nomiclabs/hardhat-etherscan");
 import "hardhat-gas-reporter";
-import "@nomicfoundation/hardhat-toolbox";
+// import "@nomicfoundation/hardhat-toolbox";
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
