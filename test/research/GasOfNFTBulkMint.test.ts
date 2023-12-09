@@ -31,8 +31,11 @@ describe("GasOfNFTBulkMint", () => {
   let minter: SignerWithAddress;
   let trustedForwarder: SignerWithAddress;
 
+  // Count num
   const numString = process.env.TOS_LENGTH;
   const num = numString ? parseInt(numString, 10) || 2 : 2;
+
+  // 
 
   beforeEach(async () => {
     [deployer, executor, admin, alice, bob, minter, trustedForwarder] = await ethers.getSigners();
