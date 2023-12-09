@@ -32,8 +32,6 @@ describe("GasOfNFTBulkMint", () => {
   const numString = process.env.TOS_LENGTH;
   const num = numString ? parseInt(numString, 10) || 2 : 1;
 
-  console.log('num', num)
-
   beforeEach(async () => {
     [deployer, executor, admin, alice, bob, minter, trustedForwarder] = await ethers.getSigners();
 
