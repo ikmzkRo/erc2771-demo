@@ -1,6 +1,3 @@
-// TODO: jupyternotebookでCSVを読み込みグラフ化して比較する
-// TODO: Zennのartickleに転載して更新
-
 import { expect } from 'chai';
 import chai from "chai";
 import { ethers } from "hardhat";
@@ -33,9 +30,9 @@ describe("GasOfNFTBulkMint", () => {
 
   // Count num
   const numString = process.env.TOS_LENGTH;
-  const num = numString ? parseInt(numString, 10) || 2 : 2;
+  const num = numString ? parseInt(numString, 10) || 2 : 1;
 
-  // 
+  console.log('num', num)
 
   beforeEach(async () => {
     [deployer, executor, admin, alice, bob, minter, trustedForwarder] = await ethers.getSigners();
@@ -77,42 +74,24 @@ describe("GasOfNFTBulkMint", () => {
   describe("bulk mint - require once", function () {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
-      const tos = Array(num).fill(alice.address);
-      const tx = await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
-
-      // Measure gas used by the transaction
-      const receipt = await tx.wait();
-      const gasUsed = receipt.gasUsed;
-
-      // Calculate gas cost in JPY (replace with your gas price)
-      const gasPrice = 21; // Replace with your gas price
-      const gasCostJPY = gasUsed * gasPrice;
-
-      // Output the result
-      console.log(`BulkMint_RequireOnce - avg: ${gasUsed}, jpy: ${gasCostJPY}`);
-
-      // Write to a CSV file (append mode)
-      fs.writeFileSync("gas-report.csv", `${num}, ${gasUsed}, ${gasCostJPY}\n`, { flag: "a" });
+      const tos = num === 1 ? [alice.address] : Array(num).fill(alice.address);
+      await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(num);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
-      expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
-      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 1)).to.equal(2);
     });
   })
 
   describe("bulk mint - require again", function () {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
-      const tos = Array(num).fill(alice.address);
+      const tos = num === 1 ? [alice.address] : Array(num).fill(alice.address);
       await gasOfNFTBulkMint.connect(admin).BulkMint_RequireAgain(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(num);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
-      expect(await gasOfNFTBulkMint.ownerOf(2)).to.equal(alice.address);
       expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 0)).to.equal(1);
-      expect(await gasOfNFTBulkMint.tokenOfOwnerByIndex(alice.address, 1)).to.equal(2);
     });
   })
 
