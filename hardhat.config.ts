@@ -26,5 +26,6 @@ module.exports = {
     currency: "JPY",
     gasPrice: 21, // Use an appropriate gas price for your network
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
+    outputFile: "./gas-report.csv",
   },
 };
