@@ -84,7 +84,7 @@ describe("GasOfNFTBulkMint", () => {
       // Measure gas used by the transaction
       const receipt = await tx.wait();
       const gasUsed = receipt.gasUsed;
-      
+
       // Calculate gas cost in JPY (replace with your gas price)
       const gasPrice = 21; // Replace with your gas price
       const gasCostJPY = gasUsed * gasPrice;
