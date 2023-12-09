@@ -1,4 +1,3 @@
-// TODO: CSVに出力する関数を記載していく
 // TODO: jupyternotebookでCSVを読み込みグラフ化して比較する
 // TODO: Zennのartickleに転載して更新
 
