@@ -1,12 +1,8 @@
-// ネットワーク接続情報を設定できるファイル
-// hardhat init: https://hardhat.org/hardhat-runner/docs/guides/migrating-from-hardhat-waffle
 require("@nomiclabs/hardhat-waffle");
 require("dotenv").config();
 require("@nomiclabs/hardhat-etherscan");
 import "hardhat-gas-reporter";
 import "@nomiclabs/hardhat-ethers";
-import chai from "chai";
-// import "@nomicfoundation/hardhat-toolbox";
 
 /**
  * @type import('hardhat/config').HardhatUserConfig
