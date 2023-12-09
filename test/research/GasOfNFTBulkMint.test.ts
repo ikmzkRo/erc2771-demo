@@ -31,6 +31,9 @@ describe("GasOfNFTBulkMint", () => {
   let minter: SignerWithAddress;
   let trustedForwarder: SignerWithAddress;
 
+  const numString = process.env.TOS_LENGTH;
+  const num = numString ? parseInt(numString, 10) || 2 : 2;
+
   beforeEach(async () => {
     [deployer, executor, admin, alice, bob, minter, trustedForwarder] = await ethers.getSigners();
 
@@ -67,9 +70,6 @@ describe("GasOfNFTBulkMint", () => {
       expect(isAdmin).to.be.false;
     });
   })
-
-  const numString = process.env.TOS_LENGTH;
-  const num = numString ? parseInt(numString, 10) || 2 : 2;
 
   describe("bulk mint - require once", function () {
     it("[S] Should bulkMint when called by minter", async function () {
