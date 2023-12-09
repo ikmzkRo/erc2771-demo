@@ -78,21 +78,7 @@ describe("GasOfNFTBulkMint", () => {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
       const tos = Array(num).fill(alice.address);
-      const tx = await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
-
-      // Measure gas used by the transaction
-      const receipt = await tx.wait();
-      const gasUsed = receipt.gasUsed;
-
-      // Calculate gas cost in JPY (replace with your gas price)
-      const gasPrice = 21; // Replace with your gas price
-      const gasCostJPY = gasUsed * gasPrice;
-
-      // Output the result
-      console.log(`BulkMint_RequireOnce - avg: ${gasUsed}, jpy: ${gasCostJPY}`);
-
-      // Write to a CSV file (append mode)
-      fs.writeFileSync("gas-report.csv", `1, ${gasUsed}, ${gasCostJPY}\n`, { flag: "a" });
+      await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(num);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
