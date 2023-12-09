@@ -9,6 +9,7 @@ import Web3 from 'web3';
 import { Contract } from "ethers";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import chaiAsPromised from 'chai-as-promised';
+import * as fs from "fs";
 
 // chai-as-promised 拡張を使用可能にする
 chai.use(chaiAsPromised);
@@ -78,7 +79,21 @@ describe("GasOfNFTBulkMint", () => {
     it("[S] Should bulkMint when called by minter", async function () {
       // check alice recipient
       const tos = Array(num).fill(alice.address);
-      await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
+      const tx = await gasOfNFTBulkMint.connect(admin).BulkMint_RequireOnce(tos);
+
+      // Measure gas used by the transaction
+      const receipt = await tx.wait();
+      const gasUsed = receipt.gasUsed;
+      
+      // Calculate gas cost in JPY (replace with your gas price)
+      const gasPrice = 21; // Replace with your gas price
+      const gasCostJPY = gasUsed * gasPrice;
+
+      // Output the result
+      console.log(`BulkMint_RequireOnce - avg: ${gasUsed}, jpy: ${gasCostJPY}`);
+
+      // Write to a CSV file (append mode)
+      fs.writeFileSync("gas-report.csv", `1, ${gasUsed}, ${gasCostJPY}\n`, { flag: "a" });
 
       expect(await gasOfNFTBulkMint.balanceOf(alice.address)).to.equal(num);
       expect(await gasOfNFTBulkMint.ownerOf(1)).to.equal(alice.address);
