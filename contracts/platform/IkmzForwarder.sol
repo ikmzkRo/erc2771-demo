@@ -112,7 +112,34 @@ contract IkmzForwarder is
     return _nonces[_req.from] == _req.nonce && signer == _req.from;
   }
 
-  // TODO: function execute()
+  // 1 endpoint
+  function execute(ForwardRequest calldata _req, bytes calldata _signature)
+    public
+    payable
+    onlyRole(EXECUTOR_ROLE)
+    whenNotPaused
+    returns (bool, bytes memory)
+  {
+    require(
+      verify(_req, _signature),
+      "IkmzForwarder: eip712signature does not match request"
+    );
+
+    // 現在の残存ガスを取得して、変数 startGas に初期化します
+    uint256 startGas = gasleft();
+
+    // 特定のアドレス（_req.from）のノンスを1増やします
+    // ノンスはEthereumトランザクションで順序をつけ、リプレイアタックを防ぐために使用されます
+    _nonces[_req.from] = _req.nonce + 1;
+
+    // _req.to の CA にある call 関数を実行
+    // success は呼び出しが成功した場合に true , それ以外は false
+    // returndata には呼び出されたコントラクトから返されたデータを格納
+    (bool success, bytes memory returndata) = _req.to.call{
+      gas: _req.gas, // TODO: フロントでコール時に指定する
+      value: _req.value // TODO: フロントでコール時に指定する
+    }(abi.encodePacked(_req.data, _req.from));
+  }
 
   function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
     _pause();
