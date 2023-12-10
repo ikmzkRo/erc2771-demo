@@ -38,6 +38,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.7.0",
+    "@openzeppelin/contracts-upgradeable": "^4.8.2",
     "Chai": "npm:chai@^4.3.7",
     "chai-as-promised": "^7.1.1",
     "web3": "^1.7.4"
