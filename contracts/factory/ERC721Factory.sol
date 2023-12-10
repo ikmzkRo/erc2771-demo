@@ -14,6 +14,7 @@ contract IkmzERC721Factory is AccessControl {
     );
 
     /// @dev Mapping from name and symbol to basic ERC721 address.
+    /// このマッピングは、ERC721 トークンの名前とシンボルから対応するコントラクトのアドレスを高速に検索できるようにするために使用されています。 
     mapping(string => mapping(string => address)) public getERC721ContractAddress;
 
     /**
@@ -38,7 +39,9 @@ contract IkmzERC721Factory is AccessControl {
         IkmzERC721 newContract = new IkmzERC721(_name, _symbol, _baseTokenURI, _admin, trustedForwarder);
         contractAddress = address(newContract);
 
+        // 新しく作成された ERC721 コントラクトのアドレスを _name および _symbol の組み合わせに関連付けて保存
         getERC721ContractAddress[_name][_symbol] = contractAddress;
+        
         emit FactoryCreated(contractAddress, _name, _symbol, _baseTokenURI, _admin);
     }
 
