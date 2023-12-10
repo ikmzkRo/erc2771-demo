@@ -123,6 +123,8 @@ contract IkmzForwarder is
   }
 
   // must func: Contract "IkmzForwarder" should be marked as abstract.solidity(3656)
+  // この関数はアップグレード時に自動的に呼び出されます
+  // この関数がデフォルトの実装を持っておらず、空のブロックであるため、アップグレードが常に許可されるようになっています
   function _authorizeUpgrade(address _newImplementation)
     internal
     override
