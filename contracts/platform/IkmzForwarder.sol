@@ -60,7 +60,7 @@ contract IkmzForwarder is
     emit Deposit(msg.sender, msg.value);
   }
 
-  // 
+  // EXECUTOR が Ether を引き出す
   function withdraw(address _executor, uint256 _amount)
     public
     onlyRole(EXECUTOR_ROLE)
@@ -171,6 +171,17 @@ contract IkmzForwarder is
       revert(abi.decode(returndata, (string)));
     }
 
+    // gasUsed: トランザクションの実行に使用されたガス使用量 [gas]
+    // gasPrice: トランザクションのガス価格 [Gwei/gas]
+    // refundAmount: 引き出し手数料と追加のガス
+    uint256 gasUsed = startGas - gasleft();
+    uint256 gasPrice = tx.gasprice;
+    uint256 refundAmount = (gasUsed * gasPrice) + 1e14; // 0.0001 ETH for withdrawal fee + extra gas
+
+    // msg.sender = executer が refundAmount を引き出します
+    withdraw(msg.sender, refundAmount);
+
+    return (success, returndata);
   }
 
   function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
