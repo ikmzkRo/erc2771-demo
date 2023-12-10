@@ -162,6 +162,15 @@ contract IkmzForwarder is
       }
     }
 
+    if (!success) {
+      // See https://ethereum.stackexchange.com/a/83577
+      if (returndata.length < 68) revert("IkmzForwarder: execute reverted");
+      assembly {
+        returndata := add(returndata, 0x04) //  戻りデータの先頭4バイトをスキップ
+      }
+      revert(abi.decode(returndata, (string)));
+    }
+
   }
 
   function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
