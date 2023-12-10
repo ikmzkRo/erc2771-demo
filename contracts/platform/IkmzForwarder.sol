@@ -139,6 +139,29 @@ contract IkmzForwarder is
       gas: _req.gas, // TODO: フロントでコール時に指定する
       value: _req.value // TODO: フロントでコール時に指定する
     }(abi.encodePacked(_req.data, _req.from));
+
+    // meta tx sequences
+    // front broadcast by TransactionSigner --> GasRelay(Signs&Send Request)--> Trusted Forwarder(sendAndVerify(request))
+    // See https://zenn.dev/pokena/articles/95f3cb4e7ba212#%E2%91%A0transactionsigner--%3E-gasrelay(signs%26send-request)
+
+    // Validate that the relayer has sent enough gas for the call.
+    // See https://ronan.eth.limo/blog/ethereum-gas-dangers/
+    
+    // TODO: broadcast する gas の指定を最適化するべき
+
+    // この種の検証は、リレータが適切なガスを提供しない場合に、攻撃者がリプレイアタックなどの悪意のある行動を行うのを防ぐために使用されます。
+    // リレータが提供した残存ガスが、要求されたガスの63分の1以下である
+    if (gasleft() <= _req.gas / 63) {
+      // We explicitly trigger invalid opcode to consume all gas and bubble-up the effects, since
+      // neither revert or assert consume all gas since Solidity 0.8.0
+      // https://docs.soliditylang.org/en/v0.8.0/control-structures.html#panic-via-assert-and-error-via-require
+      /// @solidity memory-safe-assembly
+      // この手法は、無効なオペコードによって明示的にエラーを引き起こすことで、呼び出し元にエラーを通知し、残っているガスを消費している点に注意が必要です。これはガス不足による攻撃を回避するための手段の一つです
+      assembly {
+        invalid()
+      }
+    }
+
   }
 
   function pause() public onlyRole(DEFAULT_ADMIN_ROLE) {
