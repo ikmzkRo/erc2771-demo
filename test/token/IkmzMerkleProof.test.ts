@@ -22,6 +22,7 @@ describe("IkmzMerkleProof", async function () {
   let to: SignerWithAddress;
   let allowListedUser: SignerWithAddress;
   let notListedUser: SignerWithAddress;
+  // hexProofは、特定のアドレスがMerkleツリーの"許可リスト"に含まれているかどうかを示すために使用されます
   let hexProof: string[];
   let rootHash: Buffer;
 
@@ -37,10 +38,20 @@ describe("IkmzMerkleProof", async function () {
     const merkleTree = new MerkleTree(allowList.map(keccak256), keccak256, {
       sortPairs: true,
     });
-    // コントラクトが AllowList にあるかどうかを計算
-    hexProof = merkleTree.getHexProof(keccak256(allowListedUser.address));
+
+    // allowListedUser.addressのアドレスのKeccak-256ハッシュ（通常はSHA-3とも呼ばれる）を計算
+    // Keccak-256は一方向の暗号ハッシュ関数で、ユニークな入力に対して一意のハッシュ値を生成します
+    // Merkleツリーにおいて、指定されたアドレスのハッシュに対するMerkle Proofを取得します。
+    // Merkle Proofは、ツリーのルートから対象のノードまでのパスを示す情報で、対象がツリー内に存在することを検証するのに使用されます
+    // このhexProofは、後でmint関数を呼ぶ際に、allowList（許可リスト）に含まれるアドレスであることを検証するために使用されます
+    // このhexProofを受け取り、Merkle Proofを検証して、アドレスが許可リストに含まれている場合にNFTを発行するかどうかを判断します
+    const hashedList = keccak256(allowListedUser.address)
+    const hexProof = merkleTree.getHexProof(keccak256(allowListedUser.address));
+    console.log('hexProof', hexProof);
+
     // ツリーの最上を算出
     rootHash = merkleTree.getRoot();
+
     // コントラクトにマークルルートを登録する
     await ikmzMerkleProof
       .connect(owner)
@@ -50,11 +61,6 @@ describe("IkmzMerkleProof", async function () {
 
   it("[S] The deployment address should be set as the owner.", async function () {
     expect(await ikmzMerkleProof.owner()).to.equal(owner.address)
-  });
-
-  it("[S} The owner should be able to create NFTs.", async function () {
-    await ikmzMerkleProof.mint(to.address)
-    expect(await ikmzMerkleProof.ownerOf(1)).to.equal(to.address)
   });
 
   // setMerkleRoot は owner のみ設定可能
@@ -76,11 +82,11 @@ describe("IkmzMerkleProof", async function () {
   });
 
   it("[S] mint by allowListedUserAddress", async function () {
-    await ikmzMerkleProof.connect(allowListedUser).mint(hexProof);
+    await ikmzMerkleProof.connect(allowListedUser).mint(to, hexProof);
   });
 
   it("[S] mint by notListedUserAddress", async function () {
-    await expect(ikmzMerkleProof.connect(notListedUser).mint(hexProof)).to.be.revertedWith(
+    await expect(ikmzMerkleProof.connect(notListedUser).mint(to, hexProof)).to.be.revertedWith(
       "Invalid proof"
     );
   });
