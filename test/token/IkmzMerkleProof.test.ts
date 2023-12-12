@@ -27,6 +27,9 @@ describe("IkmzMerkleProof", async function () {
 
   beforeEach(async function () {
     [owner, to, allowListedUser, notListedUser] = await ethers.getSigners();
+    IkmzMerkleProof = await ethers.getContractFactory("IkmzMerkleProof");
+    ikmzMerkleProof = await IkmzMerkleProof.deploy(name, symbol);
+    await ikmzMerkleProof.deployed();
 
     // マークルツリーを構築します
     // TODO: アドレス個別に発行する数を指定してみる
@@ -42,10 +45,6 @@ describe("IkmzMerkleProof", async function () {
     await ikmzMerkleProof
       .connect(owner)
       .setMerkleRoot(`0x${rootHash.toString("hex")}`);
-
-    IkmzMerkleProof = await ethers.getContractFactory("IkmzMerkleProof");
-    ikmzMerkleProof = await IkmzMerkleProof.deploy(name, symbol);
-    await ikmzMerkleProof.deployed();
   })
   console.log('(; ･`д･´)')
 
