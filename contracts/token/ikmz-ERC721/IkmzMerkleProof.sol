@@ -21,6 +21,8 @@ contract IkmzMerkleProof is ERC721URIStorage, Ownable {
 
     function mint(address _to, bytes32[] calldata _merkleProof) public payable returns (uint256) {
         bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+
+        // TODO: https://github.com/OpenZeppelin/merkle-tree
         require(
             MerkleProof.verify(_merkleProof, merkleRoot, leaf),
             "Invalid proof"
