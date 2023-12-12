@@ -2,7 +2,7 @@ import Head from 'next/head'
 import { useState, useEffect } from 'react'
 import { ethers } from 'ethers'
 import axios from 'axios'
-import { baseERC20ContractAddress, baseERC721ContractAddress } from '../../contracts'
+import { baseERC20ContractAddress, baseERC721ContractAddress } from '../../scripts/depoloy/arguments/contracts'
 import BaseERC721 from '../contracts/BaseERC721.json'
 import BaseERC20 from '../contracts/BaseERC20.json'
 // https://nextjs.org/docs/api-reference/next/image
