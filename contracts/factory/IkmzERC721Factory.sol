@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "contracts/token/ikmz-ERC721/ERC721.sol";
+import "contracts/token/ikmz-ERC721/IkmzERC721.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract IkmzERC721Factory is AccessControl {
