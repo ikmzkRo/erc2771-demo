@@ -19,7 +19,13 @@ contract IkmzMerkleProof is ERC721URIStorage, Ownable {
       _tokenIdTracker.increment();
     }
 
-    function mint(address _to) public payable returns (uint256) {
+    function mint(address _to, bytes32[] calldata _merkleProof) public payable returns (uint256) {
+        bytes32 leaf = keccak256(abi.encodePacked(msg.sender));
+        require(
+            MerkleProof.verify(_merkleProof, merkleRoot, leaf),
+            "Invalid proof"
+        );
+
         uint256 tokenId = _tokenIdTracker.current();
         _mint(_to, tokenId);
         _tokenIdTracker.increment();
