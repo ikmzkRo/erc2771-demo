@@ -47,6 +47,8 @@ describe("IkmzMerkleProof", async function () {
     // このhexProofを受け取り、Merkle Proofを検証して、アドレスが許可リストに含まれている場合にNFTを発行するかどうかを判断します
     const hashedList = keccak256(allowListedUser.address)
     const hexProof = merkleTree.getHexProof(keccak256(allowListedUser.address));
+
+    // TODO: hexProof が空配列で返却されてしまう
     console.log('hexProof', hexProof);
 
     // ツリーの最上を算出
