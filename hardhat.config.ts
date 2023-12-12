@@ -29,7 +29,7 @@ module.exports = {
     apiKey: process.env.ETHERSCAN_API_KEY
   },
   gasReporter: {
-    enabled: true,
+    enabled: false,
     currency: "JPY",
     gasPrice: 21, // Use an appropriate gas price for your network
     coinmarketcap: process.env.COINMARKETCAP_API_KEY,
